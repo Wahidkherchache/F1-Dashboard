@@ -1,0 +1,81 @@
+.start-lights-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem;
+}
+
+.start-lights-panel {
+  text-align: center;
+}
+
+.start-lights-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.start-lights-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.start-light {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 2px solid #333;
+  transition: all 0.15s ease;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.start-light.on {
+  background: radial-gradient(circle at 35% 35%, #ff4444, #cc0000);
+  border-color: #ff6666;
+  box-shadow:
+    0 0 20px rgba(255, 0, 0, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.start-light.off {
+  background: #1a1a1a;
+  border-color: #333;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.start-go {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--green-go);
+  text-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
+  animation: goPulse 0.5s ease infinite alternate;
+  letter-spacing: 0.2em;
+}
+
+@keyframes goPulse {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+}
+
+@media (max-width: 480px) {
+  .start-light {
+    width: 36px;
+    height: 36px;
+  }
+
+  .start-go {
+    font-size: 2rem;
+  }
+}

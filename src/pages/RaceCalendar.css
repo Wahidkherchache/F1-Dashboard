@@ -1,0 +1,142 @@
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.calendar-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform var(--transition), border-color var(--transition);
+}
+
+.calendar-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(226, 75, 74, 0.3);
+}
+
+.calendar-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.calendar-card-body {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.round-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.status-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.status-badge.live {
+  background: rgba(226, 75, 74, 0.15);
+  color: var(--ferrari-red);
+  border: 1px solid rgba(226, 75, 74, 0.4);
+  box-shadow: 0 0 8px rgba(226, 75, 74, 0.2);
+  animation: borderGlow 1.5s ease infinite alternate;
+}
+
+.status-badge.completed {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.race-location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.flag-emoji {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.locality {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.race-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.circuit-name {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  flex: 1;
+}
+
+.race-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+  padding-top: 0.75rem;
+}
+
+/* Highlight style for the NEXT race */
+.next-race-card {
+  border-color: rgba(226, 75, 74, 0.5);
+  box-shadow: 0 4px 20px rgba(226, 75, 74, 0.15);
+  background: linear-gradient(180deg, var(--bg-card) 0%, rgba(226, 75, 74, 0.02) 100%);
+}
+
+.next-race-card .round-badge {
+  color: var(--ferrari-red);
+  background: rgba(226, 75, 74, 0.1);
+  border-color: rgba(226, 75, 74, 0.2);
+}
+
+/* De-emphasized style for COMPLETED races */
+.completed-race-card {
+  opacity: 0.65;
+}
+
+.completed-race-card:hover {
+  opacity: 0.9;
+}
+
+@keyframes borderGlow {
+  from {
+    box-shadow: 0 0 4px rgba(226, 75, 74, 0.1);
+    border-color: rgba(226, 75, 74, 0.3);
+  }
+  to {
+    box-shadow: 0 0 12px rgba(226, 75, 74, 0.4);
+    border-color: rgba(226, 75, 74, 0.7);
+  }
+}

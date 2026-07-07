@@ -1,0 +1,84 @@
+.standings-table-wrapper {
+  overflow-x: auto;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.standings-table th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.standings-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition);
+}
+
+.standings-row {
+  animation: rowHighlight 1.2s ease forwards;
+}
+
+.standings-row:hover td {
+  background: var(--bg-card-hover);
+}
+
+.standings-row:nth-child(1) .pos {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.standings-row:nth-child(2) .pos {
+  color: var(--silver);
+  font-weight: 700;
+}
+
+.standings-row:nth-child(3) .pos {
+  color: var(--bronze);
+  font-weight: 700;
+}
+
+.pos {
+  font-weight: 600;
+  width: 50px;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.team {
+  color: var(--text-secondary);
+}
+
+.points {
+  font-weight: 700;
+  color: var(--ferrari-red);
+}
+
+.bar-col {
+  width: 25%;
+  min-width: 120px;
+}
+
+@media (max-width: 640px) {
+  .hide-mobile {
+    display: none;
+  }
+
+  .standings-table th,
+  .standings-table td {
+    padding: 0.65rem 0.75rem;
+  }
+}

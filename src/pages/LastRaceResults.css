@@ -1,0 +1,111 @@
+.no-data-card {
+  margin-top: 1.5rem;
+  text-align: center;
+  background: var(--bg-card);
+}
+
+.no-data-card .card-body {
+  padding: 3rem;
+  letter-spacing: 0.05em;
+}
+
+.results-table-section {
+  margin-top: 1.5rem;
+}
+
+.results-table-wrapper {
+  overflow-x: auto;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.results-table th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.results-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition);
+}
+
+.results-row {
+  animation: rowHighlight 1.2s ease forwards;
+}
+
+.results-row:hover td {
+  background: var(--bg-card-hover);
+}
+
+.results-row:nth-child(1) .pos {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.results-row:nth-child(2) .pos {
+  color: var(--silver);
+  font-weight: 700;
+}
+
+.results-row:nth-child(3) .pos {
+  color: var(--bronze);
+  font-weight: 700;
+}
+
+.pos, .num {
+  width: 50px;
+}
+
+.driver {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fl-badge {
+  font-size: 0.65rem;
+  background: rgba(128, 0, 128, 0.15);
+  color: #d18aff;
+  border: 1px solid rgba(128, 0, 128, 0.3);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+.points {
+  font-weight: 700;
+  color: var(--ferrari-red);
+}
+
+/* Highlight row with fastest lap */
+.fastest-lap-row .fl-time {
+  color: #d18aff;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .hide-mobile {
+    display: none;
+  }
+
+  .results-table th,
+  .results-table td {
+    padding: 0.65rem 0.75rem;
+  }
+}

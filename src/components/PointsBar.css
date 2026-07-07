@@ -1,0 +1,39 @@
+.points-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.points-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.points-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ferrari-red-dark), var(--ferrari-red));
+  border-radius: 3px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.points-bar-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(226, 75, 74, 0.4));
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.points-bar-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  min-width: 3rem;
+  text-align: right;
+}
