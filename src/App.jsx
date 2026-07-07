@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Overview from './pages/Overview';
 import DriverStandings from './pages/DriverStandings';
@@ -8,7 +8,7 @@ import LastRaceResults from './pages/LastRaceResults';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Overview />} />
@@ -18,6 +18,6 @@ export default function App() {
           <Route path="results" element={<LastRaceResults />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
