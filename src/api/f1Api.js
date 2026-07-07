@@ -1,26 +1,58 @@
-const BASE_URL = 'https://api.jolpi.ca/ergast/f1';
-const SEASON = '2026';
-const CACHE_TTL = 5 * 60 * 1000;
-
-const cache = new Map();
+const BASE_URL = "https://api.jolpi.ca/ergast/f1";
+const SEASON = "2026";
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const FETCH_TIMEOUT = 8000; // 8 seconds
 
 async function fetchWithCache(endpoint) {
   const now = Date.now();
-  const cached = cache.get(endpoint);
+  const cacheKey = `f1_${endpoint}`;
 
-  if (cached && now - cached.timestamp < CACHE_TTL) {
-    return cached.data;
+  // 1. Try sessionStorage cache first (survives page reloads)
+  const stored = sessionStorage.getItem(cacheKey);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (now - parsed.timestamp < CACHE_TTL) {
+        return parsed.data;
+      }
+    } catch {
+      // corrupted cache entry, ignore and refetch
+    }
   }
 
-  const response = await fetch(`${BASE_URL}/${endpoint}`);
+  // 2. Fetch with a timeout so the UI never hangs forever
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
 
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/${endpoint}`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    try {
+      sessionStorage.setItem(
+        cacheKey,
+        JSON.stringify({ data, timestamp: now }),
+      );
+    } catch {
+      // sessionStorage full or unavailable, safe to ignore
+    }
+
+    return data;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out, please try again.");
+    }
+    throw err;
   }
-
-  const data = await response.json();
-  cache.set(endpoint, { data, timestamp: now });
-  return data;
 }
 
 export async function getDriverStandings() {
@@ -30,7 +62,9 @@ export async function getDriverStandings() {
 
 export async function getConstructorStandings() {
   const data = await fetchWithCache(`${SEASON}/constructorStandings.json`);
-  return data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings ?? [];
+  return (
+    data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings ?? []
+  );
 }
 
 export async function getRaceCalendar() {
@@ -41,7 +75,9 @@ export async function getRaceCalendar() {
 export async function getLastRaceResults() {
   const data = await fetchWithCache(`${SEASON}/last/results.json`);
   const race = data.MRData.RaceTable.Races[0];
-  return race ? { race, results: race.Results ?? [] } : { race: null, results: [] };
+  return race
+    ? { race, results: race.Results ?? [] }
+    : { race: null, results: [] };
 }
 
 export async function getDriverStandingsByRound(round) {
@@ -49,11 +85,17 @@ export async function getDriverStandingsByRound(round) {
   return data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings ?? [];
 }
 
-export async function getPointsProgression(maxRound = 9) {
+// Reduced default rounds (5 instead of 9) and fetched sequentially
+// instead of all-at-once, to avoid hammering the API with parallel
+// requests and tripping rate limits.
+export async function getPointsProgression(maxRound = 5) {
   const rounds = Array.from({ length: maxRound }, (_, i) => i + 1);
-  const allStandings = await Promise.all(
-    rounds.map((r) => getDriverStandingsByRound(r))
-  );
+
+  const allStandings = [];
+  for (const r of rounds) {
+    const standings = await getDriverStandingsByRound(r);
+    allStandings.push(standings);
+  }
 
   const driverMap = {};
 
@@ -84,13 +126,13 @@ export async function getPointsProgression(maxRound = 9) {
 export function getNextRace(races) {
   const now = new Date();
   return races.find((race) => {
-    const raceDate = new Date(`${race.date}T${race.time || '00:00:00Z'}`);
+    const raceDate = new Date(`${race.date}T${race.time || "00:00:00Z"}`);
     return raceDate > now;
   });
 }
 
 export function getRaceDateTime(race) {
-  return new Date(`${race.date}T${race.time || '00:00:00Z'}`);
+  return new Date(`${race.date}T${race.time || "00:00:00Z"}`);
 }
 
 export function isRaceCompleted(race) {
