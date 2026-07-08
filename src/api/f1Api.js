@@ -1,7 +1,10 @@
-const BASE_URL = "https://api.jolpi.ca/ergast/f1";
+const BASE_URLS = [
+  "https://api.jolpi.ca/ergast/f1",
+  "https://ergast.com/api/f1",
+];
 const SEASON = "2026";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-const FETCH_TIMEOUT = 8000; // 8 seconds
+const FETCH_TIMEOUT = 10000; // 10 seconds
 const DEFAULT_HEADERS = { Accept: "application/json" };
 
 function getCacheKey(endpoint) {
@@ -37,6 +40,50 @@ function isBrowserStorageAvailable() {
   }
 }
 
+async function fetchWithTimeout(url) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: DEFAULT_HEADERS,
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function fetchFromBaseUrls(endpoint) {
+  let lastError = null;
+
+  for (const baseUrl of BASE_URLS) {
+    const url = `${baseUrl}/${endpoint}`;
+    try {
+      return await fetchWithTimeout(url);
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  if (lastError) {
+    if (lastError.name === "AbortError") {
+      throw new Error("Request timed out, please try again.");
+    }
+    throw new Error(
+      `Unable to fetch data from any API endpoint: ${lastError.message}`,
+    );
+  }
+
+  throw new Error("Unable to fetch data from any API endpoint.");
+}
+
 async function fetchWithCache(endpoint) {
   const now = Date.now();
   const cacheKey = getCacheKey(endpoint);
@@ -50,41 +97,20 @@ async function fetchWithCache(endpoint) {
     }
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+  const data = await fetchFromBaseUrls(endpoint);
 
-  try {
-    const response = await fetch(`${BASE_URL}/${endpoint}`, {
-      signal: controller.signal,
-      headers: DEFAULT_HEADERS,
-    });
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+  if (storageAvailable) {
+    try {
+      sessionStorage.setItem(
+        cacheKey,
+        JSON.stringify({ data, timestamp: now }),
+      );
+    } catch {
+      // ignore storage failures
     }
-
-    const data = await response.json();
-
-    if (storageAvailable) {
-      try {
-        sessionStorage.setItem(
-          cacheKey,
-          JSON.stringify({ data, timestamp: now }),
-        );
-      } catch {
-        // ignore storage failures
-      }
-    }
-
-    return data;
-  } catch (err) {
-    clearTimeout(timeoutId);
-    if (err.name === "AbortError") {
-      throw new Error("Request timed out, please try again.");
-    }
-    throw err;
   }
+
+  return data;
 }
 
 function extractStandings(data, key) {
