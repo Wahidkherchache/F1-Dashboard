@@ -238,17 +238,17 @@ async function fetchOverviewData() {
   ]);
 
   const nextRace = getNextRace(races);
-  
+
   // Find completed races to know how many rounds to fetch for the chart
   const completedRaces = races.filter(isRaceCompleted);
   const completedRounds = completedRaces.length;
-  
+
   let chartData = [];
   if (completedRounds > 0) {
     try {
       // Get points progression for the top 5 drivers up to the current completed round
       const rawProgression = await getPointsProgression(completedRounds);
-      
+
       // Recharts expects data formatted as: [{ round: 1, 'Hamilton': 25, 'Verstappen': 18 }, ...]
       // Let's transform it:
       const rounds = Array.from({ length: completedRounds }, (_, i) => i + 1);

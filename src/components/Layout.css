@@ -89,6 +89,35 @@
   border-radius: 1px;
 }
 
+.nav-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: var(--ferrari-red);
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px var(--ferrari-red);
+  animation: navPulse 1.5s infinite;
+}
+
+@keyframes navPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+    box-shadow: 0 0 8px var(--ferrari-red);
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+
 .main {
   flex: 1;
 }

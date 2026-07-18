@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: '/constructors', label: 'Constructors' },
   { to: '/calendar', label: 'Calendar' },
   { to: '/results', label: 'Last Race' },
+  { to: '/live', label: 'Live' },
 ];
 
 export default function Layout() {
@@ -28,10 +29,11 @@ export default function Layout() {
                 to={to}
                 end={end}
                 className={({ isActive }) =>
-                  `nav-link ${isActive ? 'active' : ''}`
+                  `nav-link ${isActive ? 'active' : ''} ${to === '/live' ? 'nav-link-live' : ''}`
                 }
               >
                 {label}
+                {to === '/live' && <span className="nav-live-dot" />}
               </NavLink>
             ))}
           </nav>
@@ -50,3 +52,4 @@ export default function Layout() {
     </div>
   );
 }
+

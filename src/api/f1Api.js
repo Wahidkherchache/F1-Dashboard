@@ -1,11 +1,14 @@
-const BASE_URLS = [
-  "https://api.jolpi.ca/ergast/f1",
-  "https://ergast.com/api/f1",
-];
-const SEASON = "2026";
+const API_BASE =
+  import.meta.env.VITE_F1_API_BASE?.replace(/\/$/, "") ||
+  "https://api.jolpi.ca/ergast/f1";
+const API_KEY = import.meta.env.VITE_F1_API_KEY || "";
+const SEASON = import.meta.env.VITE_F1_API_SEASON || "2026";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-const FETCH_TIMEOUT = 10000; // 10 seconds
-const DEFAULT_HEADERS = { Accept: "application/json" };
+const FETCH_TIMEOUT = 20000; // 10 seconds
+const DEFAULT_HEADERS = {
+  Accept: "application/json",
+  ...(API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {}),
+};
 
 function getCacheKey(endpoint) {
   return `f1_${endpoint}`;
@@ -61,27 +64,15 @@ async function fetchWithTimeout(url) {
 }
 
 async function fetchFromBaseUrls(endpoint) {
-  let lastError = null;
-
-  for (const baseUrl of BASE_URLS) {
-    const url = `${baseUrl}/${endpoint}`;
-    try {
-      return await fetchWithTimeout(url);
-    } catch (err) {
-      lastError = err;
-    }
-  }
-
-  if (lastError) {
-    if (lastError.name === "AbortError") {
+  const url = `${API_BASE}/${endpoint}`;
+  try {
+    return await fetchWithTimeout(url);
+  } catch (err) {
+    if (err.name === "AbortError") {
       throw new Error("Request timed out, please try again.");
     }
-    throw new Error(
-      `Unable to fetch data from any API endpoint: ${lastError.message}`,
-    );
+    throw new Error(`API request failed: ${err.message}`);
   }
-
-  throw new Error("Unable to fetch data from any API endpoint.");
 }
 
 async function fetchWithCache(endpoint) {
